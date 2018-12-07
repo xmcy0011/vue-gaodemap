@@ -24,7 +24,16 @@ export default {
 
     setTimeout(() => {
       console.log("this.add()");
-      this.add(120.729577, 31.265226, "test1", "设备1", 500);
+      let marker = this.add(120.729577, 31.265226, "test1", "设备1", 500);
+
+      setTimeout(
+        m => {
+          console.log("this.update()");
+          this.update(m, 120.729577, 31.267226);
+        },
+        5000,
+        marker
+      );
     }, 2000);
   },
   methods: {
@@ -82,7 +91,20 @@ export default {
      * @newLon：新的经度
      * @newLat：新的维度
      */
-    update(marker, newLon, newLat, time, speed, direct, status) {},
+    update(marker, newLon, newLat, time, accuracy, speed, direct, status) {
+      marker.setPosition([newLon, newLat]);
+
+      // 保存自定义信息
+      let data = marker.getExtData();
+      marker.setExtData({
+        uid: data.uid,
+        time: time,
+        accuracy: accuracy,
+        speed: speed,
+        direct: direct,
+        status: status
+      });
+    },
     /**
      * 清楚所有覆盖物
      */
