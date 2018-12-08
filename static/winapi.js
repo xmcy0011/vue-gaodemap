@@ -16,7 +16,7 @@ var userList = [];
 function mapAdd(userName, displayName) {
   let list = userList;
   for (let i = list.length - 1; i >= 0; i--) {
-    if (list[i].getId() === userName) {
+    if (list[i].getUserName() === userName) {
       return;
     }
   }

@@ -27,6 +27,7 @@ export default {
     // 创建 infoWindow 实例
     this.infoWindow = new AMap.InfoWindow();
 
+    /*
     // 单元测试代码
     setTimeout(() => {
       console.log("this.add()");
@@ -57,6 +58,7 @@ export default {
         marker
       );
     }, 2000);
+    */
   },
   methods: {
     /**
@@ -65,9 +67,9 @@ export default {
      * @lat：维度
      */
     panTo(lon, lat) {
-      this.map.panTo(lon, lat);
+      this.map.panTo([lon, lat]);
     },
-    showWindow(uid) {},
+    showWindow(uid) { },
     /**
      * 添加一个覆盖物
      * @lon：经度
@@ -104,8 +106,8 @@ export default {
 
       // 绑定鼠标点击事件
       let _this = this;
-      marker.on("click", function(e) {
-        _this._onClickMarker(this, _this);
+      marker.on("click", function (e) {
+        _this._onClickMarker(this, _this, false);
       });
       this.map.add(marker);
       return marker;
@@ -120,6 +122,9 @@ export default {
       marker.setPosition([newLon, newLat]);
       // 保存自定义信息
       let data = marker.getExtData();
+      if (data === undefined || data === null) {
+        return;
+      }
       data.time = time;
       data.speed = speed;
       data.direct = direct;
@@ -127,8 +132,8 @@ export default {
       marker.setExtData(data);
 
       // 此时得更新infoWindow
-      if (marker === this.infoWindowMarker) {
-        this._onClickMarker(marker, this);
+      if (marker === this.infoWindowMarker && this.infoWindow.getIsOpen()) {
+        this._onClickMarker(marker, this, true);
       }
     },
     /**
@@ -142,7 +147,7 @@ export default {
     /**
      * 覆盖物点击，弹出信息窗口
      */
-    _onClickMarker(marker, _this) {
+    _onClickMarker(marker, _this, update) {
       let info = marker.getExtData();
       let content = _this._getInfoWindowContent(info,
         marker.getTitle(),
@@ -152,7 +157,12 @@ export default {
       // 显示信息窗口
       _this.infoWindowMarker = marker;
       _this.infoWindow.setContent(content.join(""));
-      _this.infoWindow.open(_this.map, marker.getPosition());
+
+      if (update) {
+        _this.infoWindow.setPosition(marker.getPosition());
+      } else {
+        _this.infoWindow.open(_this.map, marker.getPosition());
+      }
     },
     /**
      * 获取信息框内显示的内容
@@ -201,11 +211,11 @@ export default {
   word-wrap: break-word;
   background-color: #fff;
   background-clip: border-box;
-  border-radius: .25rem;
+  border-radius: 0.25rem;
   width: 18rem;
   border-width: 0;
   border-radius: 0.4rem;
-  box-shadow: 0 2px 6px 0 rgba(114, 124, 245, .5);
+  box-shadow: 0 2px 6px 0 rgba(114, 124, 245, 0.5);
   position: fixed;
   bottom: 1rem;
   right: 1rem;
@@ -226,22 +236,26 @@ export default {
   font-size: 13px;
   height: 24px;
   line-height: 16.8px;
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+    "Helvetica Neue", Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji",
+    "Segoe UI Symbol", "Noto Color Emoji";
 }
 
-.content-window-card{
+.content-window-card {
   position: relative;
   width: 18rem;
   padding: 0 0 0 0.5rem;
   box-shadow: none;
   bottom: 0;
   left: 0;
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+    "Helvetica Neue", Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji",
+    "Segoe UI Symbol", "Noto Color Emoji";
   line-height: 1.5;
   color: #111213;
 }
 
-.content-window-card p{
+.content-window-card p {
   height: 0.8rem;
 }
 
