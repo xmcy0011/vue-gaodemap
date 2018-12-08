@@ -12,7 +12,9 @@ export default {
   name: "home",
   data() {
     return {
-      map: null
+      map: null,
+      infoWindow: null,
+      infoWindowMarker: null
     };
   },
   mounted() {
@@ -22,14 +24,34 @@ export default {
       center: [120.729577, 31.265226]
     });
 
+    // 创建 infoWindow 实例
+    this.infoWindow = new AMap.InfoWindow();
+
+    // 单元测试代码
     setTimeout(() => {
       console.log("this.add()");
-      let marker = this.add(120.729577, 31.265226, "test1", "设备1", 500);
+      let marker = this.add(120.729577, 31.265226, "设备1", {
+        uid: "test1", // 唯一标志
+        locationType: null, // 获取当前定位结果来源，如网络定位结果，详见定位类型表 https://lbs.amap.com/api/android-location-sdk/guide/utilities/location-type
+        gpsAccuracyStatus: "强", // GPS的当前状态
+        trustedLevel: null, // 定位结果的可信度
+        accuracy: "100米", // 精度信息，单位:米
+        speed: null, // 速度
+        direct: null, // 方向
+        status: null, // 定位状态
+        time: "2018-12-08 16:43:01", // 定位时间
+        address: null // 地址
+      });
 
       setTimeout(
         m => {
           console.log("this.update()");
-          this.update(m, 120.729577, 31.267226);
+          this.update(m, 120.729577, 31.267226, "2018-12-08 17:00:32", null, null, null);
+
+          setTimeout(() => {
+            console.log("this.clear()");
+            this.clear();
+          }, 5000);
         },
         5000,
         marker
@@ -50,16 +72,23 @@ export default {
      * 添加一个覆盖物
      * @lon：经度
      * @lat：维度
-     * @uid：唯一标识
      * @text：要显示的文本
-     * @time：时间
-     * @accuracy：精度
-     * @speed：速度
-     * @direct：方向
-     * @status：状态
+     * @descObject：覆盖物的各种描述信息 {
+        uid: uid, // 唯一标志
+        locationType: null, // 获取当前定位结果来源，如网络定位结果，详见定位类型表 https://lbs.amap.com/api/android-location-sdk/guide/utilities/location-type
+        gpsAccuracyStatus: null, // GPS的当前状态
+        trustedLevel: null, // 定位结果的可信度
+        accuracy: accuracy, // 精度信息，单位:米
+        speed: speed, // 速度
+        direct: direct, // 方向
+        status: status, // 定位状态
+        time: time, // 定位时间
+        address: null, // 地址
+      }
      * @return marker
      */
-    add(lon, lat, uid, text, time, accuracy, speed, direct, status) {
+    add(lon, lat, text, descObject) {
+      // 小三角、和阴影
       const content = `<div class="test_triangle_border">
                         <div class="popup">
                           <em></em><span></span>test01
@@ -68,21 +97,17 @@ export default {
       let marker = new AMap.Marker({
         content: content, // 自定义点标记覆盖物内容
         position: [lon, lat],
+        title: text,
         offset: new AMap.Pixel(-75, -72),
-        // 自定义式数据
-        extData: {
-          uid: uid,
-          time: time,
-          accuracy: accuracy,
-          speed: speed,
-          direct: direct,
-          status: status
-        }
+        extData: descObject
+      });
+
+      // 绑定鼠标点击事件
+      let _this = this;
+      marker.on("click", function(e) {
+        _this._onClickMarker(this, _this);
       });
       this.map.add(marker);
-
-      console.log(marker.getExtData());
-
       return marker;
     },
     /**
@@ -91,24 +116,70 @@ export default {
      * @newLon：新的经度
      * @newLat：新的维度
      */
-    update(marker, newLon, newLat, time, accuracy, speed, direct, status) {
+    update(marker, newLon, newLat, time, speed, direct, status) {
       marker.setPosition([newLon, newLat]);
-
       // 保存自定义信息
       let data = marker.getExtData();
-      marker.setExtData({
-        uid: data.uid,
-        time: time,
-        accuracy: accuracy,
-        speed: speed,
-        direct: direct,
-        status: status
-      });
+      data.time = time;
+      data.speed = speed;
+      data.direct = direct;
+      data.status = status;
+      marker.setExtData(data);
+
+      // 此时得更新infoWindow
+      if (marker === this.infoWindowMarker) {
+        this._onClickMarker(marker, this);
+      }
     },
     /**
      * 清楚所有覆盖物
      */
-    clear() {}
+    clear() {
+      this.infoWindow.close();
+      this.infoWindowMarker = null;
+      this.map.clearMap();
+    },
+    /**
+     * 覆盖物点击，弹出信息窗口
+     */
+    _onClickMarker(marker, _this) {
+      let info = marker.getExtData();
+      let content = _this._getInfoWindowContent(info,
+        marker.getTitle(),
+        marker.getPosition().getLng(),
+        marker.getPosition().getLat());
+
+      // 显示信息窗口
+      _this.infoWindowMarker = marker;
+      _this.infoWindow.setContent(content.join(""));
+      _this.infoWindow.open(_this.map, marker.getPosition());
+    },
+    /**
+     * 获取信息框内显示的内容
+     */
+    _getInfoWindowContent(data, text, lng, lat) {
+      // 构建信息窗体中显示的内容
+      var info = [];
+      info.push("<div class='input-card content-window-card'>");
+      info.push("<div style=\"padding:7px 0px 0px 0px;\"><p class='input-item' style='font-size:18px;margin-top:7px;'>" + text + "</p>");
+      info.push("<p class='input-item'>" + "定位类型 : " + (data.locationType !== null ? data.locationType : "未知") + "</p>");
+      info.push("<p class='input-item'>" + "GPS状态 ：" + (data.gpsAccuracyStatus !== null ? data.gpsAccuracyStatus : "未知") + "</p>");
+      info.push("<p class='input-item'>" + "定位结果可信度 : " + (data.trustedLevel !== null ? data.trustedLevel : "未知") + "</p>");
+      info.push("<p class='input-item'>" + "精度 : " + (data.accuracy !== null ? data.accuracy : "未知") + "</p>");
+      info.push("<p class='input-item'>" + "速度 : " + (data.speed !== null ? data.speed : "未知") + "</p>");
+      info.push("<p class='input-item'>" + "方向 : " + (data.direct !== null ? data.direct : "未知") + "</p>");
+      info.push("<p class='input-item'>" + "定位状态 : " + (data.status !== null ? data.status : "未知") + "</p>");
+      info.push("<p class='input-item'>" + "定位时间 : " + (data.time !== null ? data.time : "未知") + "</p>");
+      info.push("<p class='input-item'>" + "地址 : " + (data.address !== null ? data.address : "未知") + "</p>");
+      info.push("<p class='input-item'>" + "经纬度 : " + (lng + "," + lat) + "</p>");
+
+      info.push("<div class='row'><button type='button' class='btn btn-default'>语音通话</button>");
+      info.push("<button type='button' class='btn btn-default'>视频查看</button>");
+      info.push("<button type='button' class='btn btn-default'>历史轨迹</button></div>");
+      info.push("</div></div>");
+
+      return info;
+    }
   }
 };
 </script>
@@ -121,6 +192,87 @@ export default {
 #map-container {
   width: 100%;
   height: 100%;
+}
+
+.input-card {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  word-wrap: break-word;
+  background-color: #fff;
+  background-clip: border-box;
+  border-radius: .25rem;
+  width: 18rem;
+  border-width: 0;
+  border-radius: 0.4rem;
+  box-shadow: 0 2px 6px 0 rgba(114, 124, 245, .5);
+  position: fixed;
+  bottom: 1rem;
+  right: 1rem;
+  -ms-flex: 1 1 auto;
+  flex: 1 1 auto;
+  padding: 0.75rem 1.25rem;
+}
+
+.input-item {
+  position: relative;
+  display: -ms-flexbox;
+  display: flex;
+  -ms-flex-wrap: wrap;
+  flex-wrap: wrap;
+  -ms-flex-align: center;
+  align-items: center;
+  width: 100%;
+  font-size: 13px;
+  height: 24px;
+  line-height: 16.8px;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+}
+
+.content-window-card{
+  position: relative;
+  width: 18rem;
+  padding: 0 0 0 0.5rem;
+  box-shadow: none;
+  bottom: 0;
+  left: 0;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+  line-height: 1.5;
+  color: #111213;
+}
+
+.content-window-card p{
+  height: 0.8rem;
+}
+
+.btn {
+  display: inline-block;
+  margin: 4px;
+  width: 80px;
+  height: 30px;
+  font-weight: 400;
+  font-size: 14px;
+  text-align: center;
+  vertical-align: middle;
+  touch-action: manipulation;
+  cursor: pointer;
+  background-image: none;
+  border: 1px solid transparent;
+  white-space: nowrap;
+}
+.btn:hover {
+  color: #333;
+  text-decoration: none;
+}
+.btn:active {
+  outline: 0;
+  background-image: none;
+  box-shadow: inset 0 3px 5px rgba(0, 0, 0, 0.125);
+}
+.btn-default {
+  color: #333;
+  background-color: #fff;
+  border-color: #ccc;
 }
 
 /*自定义图标样式*/
