@@ -63,19 +63,27 @@ export default {
   methods: {
     /**
      * 平滑的移动地图到某个点
-     * @lon：经度
-     * @lat：维度
+     * @param {[lon]}：经度
+     * @param {[lat]}：维度
      */
     panTo(lon, lat) {
       this.map.panTo([lon, lat]);
     },
+    /**
+     * 获取地图的实例对象
+     * @param {[lon]}：经度
+     * @param {[lat]}：维度
+     */
+    getMap() {
+      return this.map;
+    },
     showWindow(uid) { },
     /**
      * 添加一个覆盖物
-     * @lon：经度
-     * @lat：维度
-     * @text：要显示的文本
-     * @descObject：覆盖物的各种描述信息 {
+     * @param {[lon]}：经度
+     * @param {[lat]}：维度
+     * @param {[text]}：要显示的文本
+     * @param {[descObject]}：覆盖物的各种描述信息 {
         uid: uid, // 唯一标志
         locationType: null, // 获取当前定位结果来源，如网络定位结果，详见定位类型表 https://lbs.amap.com/api/android-location-sdk/guide/utilities/location-type
         gpsAccuracyStatus: null, // GPS的当前状态
@@ -93,7 +101,7 @@ export default {
       // 小三角、和阴影
       const content = `<div class="test_triangle_border">
                         <div class="popup">
-                          <em></em><span></span>test01
+                          <em></em><span></span>${text}
                         </div>
                        </div>`;
       let marker = new AMap.Marker({
@@ -114,9 +122,9 @@ export default {
     },
     /**
      * 更新覆盖物的坐标
-     * @marker：覆盖物
-     * @newLon：新的经度
-     * @newLat：新的维度
+     * @param {[marker]}：覆盖物
+     * @param {[newLon]}：新的经度
+     * @param {[newLat]}：新的维度
      */
     update(marker, newLon, newLat, time, speed, direct, status) {
       marker.setPosition([newLon, newLat]);

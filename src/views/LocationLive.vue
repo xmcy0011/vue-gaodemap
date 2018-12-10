@@ -70,7 +70,7 @@ export default {
         for (let i = 0; i < userList.length; i++) {
           queryParam.push(userList[i].getUserName());
         }
-        let url = "http://" + hostName + "/LiveLocation/query_live_location_jsonp";
+        let url = "http://" + hostName + "/LiveLocation/query_jsonp";
         $.ajax({
           url: url,
           type: "GET",

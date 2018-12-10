@@ -29,8 +29,8 @@ function mapAdd(userName, displayName) {
  * @return void
  */
 function mapClear() {
-  if (snList !== undefined) {
-    snList = [];
+  if (userList !== undefined) {
+    userList = [];
   }
   window.vm.$store.state.live.needClearMarker = true;
   console.log(window.vm.$store.state.live.needClearMarker);
