@@ -3,8 +3,8 @@
     <Player ref="player"></Player>
     <!--条件输入区-->
     <div class="inputArea">
-      <TraceSelect ref="traceSelect"></TraceSelect>
-      <TrailSummList v-show="this.$store.state.history.showSummy" id="trailSummList" ref="trailSummList"></TrailSummList>
+      <TraceDateSelect ref="traceSelect"></TraceDateSelect>
+      <TraceList v-show="this.$store.state.history.showSummy" id="trailSummList" ref="trailSummList"></TraceList>
     </div>
     <el-button class="menu" icon="el-icon-back" type="primary" round>
       <router-link to="/" style="color:white; text-decoration: none;">返回</router-link>

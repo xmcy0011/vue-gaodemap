@@ -172,7 +172,7 @@ export default {
       this.polyline.setPath(this.routeCoords);
     },
     clear() {
-      // this.map.getLayers().remove(this.vectorLayer);
+      this.passedPolyline.setPath([]);
       this.routeCoords = [];
       this.routeLength = 0;
       this.curRoute = 0;
@@ -252,7 +252,7 @@ export default {
   height: 30px;
 }
 #progresslabel {
-  margin-left: 15px;
+  margin-left: 5px;
   margin-right: 5px;
   width: 200px;
   text-align: center;

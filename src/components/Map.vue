@@ -26,6 +26,34 @@ export default {
 
     // 创建 infoWindow 实例
     this.infoWindow = new AMap.InfoWindow();
+    // 窗口打开时，绑定按钮点击事件
+    this.infoWindow.on("change", () => {
+      console.log("infowindow is change");
+
+      // 窗口显示，需要时间
+      setTimeout(() => {
+        let elem = document.getElementById("btnVoice");
+        if (elem != null) {
+          elem.onclick = () => {
+            this._onClickInfoWindowBtnVoice();
+          };
+        }
+
+        elem = document.getElementById("btnVideo");
+        if (elem != null) {
+          elem.onclick = () => {
+            this._onClickInfoWindowBtnVideo();
+          };
+        }
+
+        elem = document.getElementById("btnTrace");
+        if (elem != null) {
+          elem.onclick = () => {
+            this._onClickInfoWindowBtnTrace();
+          };
+        }
+      }, 200);
+    });
 
     /*
     // 单元测试代码
@@ -172,6 +200,24 @@ export default {
         _this.infoWindow.open(_this.map, marker.getPosition());
       }
     },
+    // 信息框中，语音通话按钮被点击
+    _onClickInfoWindowBtnVoice() {
+      console.log("btnVoice is clicked!");
+    },
+    // 信息框中，视频查看按钮被点击
+    _onClickInfoWindowBtnVideo() {
+      console.log("btnVideo is clicked!");
+    },
+    // 信息框中，轨迹按钮被点击
+    _onClickInfoWindowBtnTrace() {
+      // 跳转到历史轨迹回放界面
+      if (this.infoWindowMarker === null) {
+        return;
+      }
+      let userName = this.infoWindowMarker.getExtData().uid;
+      console.log("跳转到历史轨迹界面，用户名：" + userName);
+      this.$router.push({ name: "history", params: { userName: userName } });
+    },
     /**
      * 获取信息框内显示的内容
      */
@@ -191,9 +237,9 @@ export default {
       info.push("<p class='input-item'>" + "地址 : " + (data.address !== null ? data.address : "未知") + "</p>");
       info.push("<p class='input-item'>" + "经纬度 : " + (lng + "," + lat) + "</p>");
 
-      info.push("<div class='row'><button type='button' class='btn btn-default'>语音通话</button>");
-      info.push("<button type='button' class='btn btn-default'>视频查看</button>");
-      info.push("<button type='button' class='btn btn-default'>历史轨迹</button></div>");
+      info.push("<div class='row'><button id='btnVoice' type='button' class='btn btn-default'>语音通话</button>");
+      info.push("<button id='btnVideo' type='button' class='btn btn-default'>视频查看</button>");
+      info.push("<button id='btnTrace' type='button' class='btn btn-default'>历史轨迹</button></div>");
       info.push("</div></div>");
 
       return info;
