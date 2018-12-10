@@ -1,6 +1,23 @@
 <template>
   <div class="full">
     <div id="map-container"></div>
+    <div class="mapStyle">
+      <el-select
+        style="width:100px;"
+        v-model="curMapStyle"
+        placeholder="请选择"
+        @change="mapStyleSelectedChange"
+      >
+        <el-option-group v-for="group in options3" :key="group.label" :label="group.label">
+          <el-option
+            v-for="item in group.options"
+            :key="item.value"
+            :label="item.label"
+            :value="item.value"
+          ></el-option>
+        </el-option-group>
+      </el-select>
+    </div>
   </div>
 </template>
 
@@ -14,14 +31,63 @@ export default {
     return {
       map: null,
       infoWindow: null,
-      infoWindowMarker: null
+      infoWindowMarker: null,
+
+      options3: [{
+        label: '推荐',
+        options: [{
+          value: 'normal',
+          label: '标准'
+        }, {
+          value: 'dark',
+          label: '幻影黑'
+        }]
+      }, {
+        label: '自定义',
+        options: [{
+          value: 'macaron',
+          label: '马卡龙'
+        }, {
+          value: 'graffiti',
+          label: '涂鸦'
+        }, {
+          value: 'fresh',
+          label: '草色青'
+        }, {
+          value: 'blue',
+          label: '靛青蓝'
+        }, {
+          value: 'whitesmoke',
+          label: '远山黛'
+        }, {
+          value: 'darkblue',
+          label: '极夜蓝'
+        }, {
+          value: 'light',
+          label: '月光银'
+        }, {
+          value: 'grey',
+          label: '雅士灰'
+        }]
+      }],
+      curMapStyle: 'normal'
     };
   },
   mounted() {
     this.map = new AMap.Map("map-container", {
-      mapStyle: "amap://styles/whitesmoke",
+      mapStyle: "amap://styles/normal",
       zoom: 15,
       center: [120.729577, 31.265226]
+    });
+    AMap.plugin('AMap.ToolBar', () => { // 异步加载插件
+      let toolbar = new AMap.ToolBar({
+        position: "RB"
+      });
+      this.map.addControl(toolbar);
+    });
+    AMap.plugin(["AMap.Scale"], () => {
+      var scale = new AMap.Scale();
+      this.map.addControl(scale);
     });
 
     // 创建 infoWindow 实例
@@ -89,6 +155,10 @@ export default {
     */
   },
   methods: {
+    // 地图自定义主题改变
+    mapStyleSelectedChange(value) {
+      this.map.setMapStyle('amap://styles/' + value);
+    },
     /**
      * 平滑的移动地图到某个点
      * @param {[lon]}：经度
@@ -252,6 +322,15 @@ export default {
 .full {
   width: 100%;
   height: 100%;
+}
+.mapStyle {
+  position: absolute;
+  left: 10px;
+  bottom: 50px;
+  background: #ffffff;
+  padding: 5px;
+  border-radius: 5px;
+  border-color: #ebebeb;
 }
 #map-container {
   width: 100%;
