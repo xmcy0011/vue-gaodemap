@@ -32,6 +32,8 @@
 </template>
 
 <script>
+import AMap from "AMap";
+
 export default {
   data() {
     return {
@@ -153,12 +155,12 @@ export default {
       for (let i = 0; i < points.length; i++) {
         let lng = parseFloat(points[i].lng);
         let lat = parseFloat(points[i].lat);
+
         // 在中国的才有效，经度73-135，维度4-53
         if (lng >= 73 && lng <= 135 && lat >= 4 && lat <= 53) {
           this.routeCoords.push([lng, lat]);
         }
       }
-
       // 更新进度
       this.curRoute = 0;
       this.routeLength = this.routeCoords.length;

@@ -47,11 +47,20 @@ function Location() {
   this.speed = null; // 速度
   this.time = null; // 定时的时间
 
+  this.locationMode = null;// 定位模式
   this.locationType = null; // 获取当前定位结果来源，如网络定位结果，详见定位类型表 https://lbs.amap.com/api/android-location-sdk/guide/utilities/location-type
   this.gpsAccuracyStatus = null; // GPS的当前状态
   this.trustedLevel = null; // 定位结果的可信度
   this.accuracy = null; // 精度信息，单位:米
   this.address = null; // 地址
+  this.status = null; // 定位状态
+
+  this.getLocationMode = function () {
+    return this.locationMode;
+  };
+  this.setLocationMode = function (value) {
+    this.locationMode = value;
+  };
 
   this.getLocationType = function () {
     return this.locationType;
@@ -86,6 +95,13 @@ function Location() {
   };
   this.setAddress = function (value) {
     this.address = value;
+  };
+
+  this.getStatus = function () {
+    return this.status;
+  };
+  this.setStatus = function (value) {
+    this.status = value;
   };
 
   this.setLng = function (lng) {

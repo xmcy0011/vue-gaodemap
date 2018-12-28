@@ -224,18 +224,14 @@ export default {
      * @param {[newLon]}：新的经度
      * @param {[newLat]}：新的维度
      */
-    update(marker, newLon, newLat, time, speed, direct, status) {
+    update(marker, newLon, newLat, descObject) {
       marker.setPosition([newLon, newLat]);
       // 保存自定义信息
       let data = marker.getExtData();
       if (data === undefined || data === null) {
         return;
       }
-      data.time = time;
-      data.speed = speed;
-      data.direct = direct;
-      data.status = status;
-      marker.setExtData(data);
+      marker.setExtData(descObject);
 
       // 此时得更新infoWindow
       if (marker === this.infoWindowMarker && this.infoWindow.getIsOpen()) {
@@ -296,13 +292,28 @@ export default {
       var info = [];
       info.push("<div class='input-card content-window-card'>");
       info.push("<div style=\"padding:7px 0px 0px 0px;\"><p class='input-item' style='font-size:18px;margin-top:7px;'>" + text + "</p>");
-      info.push("<p class='input-item'>" + "定位类型 : " + (data.locationType !== null ? data.locationType : "未知") + "</p>");
-      info.push("<p class='input-item'>" + "GPS状态 ：" + (data.gpsAccuracyStatus !== null ? data.gpsAccuracyStatus : "未知") + "</p>");
-      info.push("<p class='input-item'>" + "定位结果可信度 : " + (data.trustedLevel !== null ? data.trustedLevel : "未知") + "</p>");
-      info.push("<p class='input-item'>" + "精度 : " + (data.accuracy !== null ? data.accuracy : "未知") + "</p>");
-      info.push("<p class='input-item'>" + "速度 : " + (data.speed !== null ? data.speed : "未知") + "</p>");
+
+      if (data.status === "成功") {
+        info.push("<p class='input-item'>" + "定位状态 : " + (data.status !== null ? data.status : "未知") + "</p>");
+      } else {
+        info.push("<p class='input-item' style='color:red;height:30px;'>" + "定位状态 : " + (data.status !== null ? data.status : "未知") + "</p>");
+      }
+      info.push("<p class='input-item'>" + "定位模式 : " + (data.locationMode !== null ? data.locationMode : "未知") + "</p>");
+      info.push("<p class='input-item'>" + "定位来源 : " + (data.locationType !== null ? data.locationType : "未知") + "</p>");
+
+      if (data.gpsAccuracyStatus === "卫星信号强") {
+        info.push("<p class='input-item' style='color:green;'>" + "GPS状态 ：" + (data.gpsAccuracyStatus !== null ? data.gpsAccuracyStatus : "未知") + "</p>");
+      } else {
+        info.push("<p class='input-item' style='color:#EA7500;'>" + "GPS状态 ：" + (data.gpsAccuracyStatus !== null ? data.gpsAccuracyStatus : "未知") + "</p>");
+      }
+      if (data.trustedLevel === "非常可信") {
+        info.push("<p class='input-item' style='color:green;'>" + "定位结果可信度 : " + (data.trustedLevel !== null ? data.trustedLevel : "未知") + "</p>");
+      } else {
+        info.push("<p class='input-item'>" + "定位结果可信度 : " + (data.trustedLevel !== null ? data.trustedLevel : "未知") + "</p>");
+      }
+      info.push("<p class='input-item'>" + "精度 : " + (data.accuracy !== null ? data.accuracy : "未知") + "米</p>");
+      info.push("<p class='input-item'>" + "速度 : " + (data.speed !== null ? data.speed : "未知") + "米/秒</p>");
       info.push("<p class='input-item'>" + "方向 : " + (data.direct !== null ? data.direct : "未知") + "</p>");
-      info.push("<p class='input-item'>" + "定位状态 : " + (data.status !== null ? data.status : "未知") + "</p>");
       info.push("<p class='input-item'>" + "定位时间 : " + (data.time !== null ? data.time : "未知") + "</p>");
       info.push("<p class='input-item'>" + "地址 : " + (data.address !== null ? data.address : "未知") + "</p>");
       info.push("<p class='input-item'>" + "经纬度 : " + (lng + "," + lat) + "</p>");

@@ -99,9 +99,7 @@ export default {
                   // 保存该用户的相关信息
                   let location = userList[j].getLocation();
                   let curLocation = data.location_list[i];
-                  location.setTime(curLocation.time !== "" ? curLocation.time.substring(0, 19) : "未知");
-                  location.setSpeed(curLocation.speed !== "" ? curLocation.speed : "未知");
-                  location.setDirect(curLocation.direct !== "" ? curLocation.direct : "未知");
+                  _this._saveLocationInfo(location, curLocation);
                   location.setLng(gcj02[0]);
                   location.setLat(gcj02[1]);
 
@@ -109,15 +107,16 @@ export default {
                   if (userList[j].getIsAddInMap() === false) {
                     let userInfo = {
                       uid: userList[j].getUserName(), // 唯一标志
-                      locationType: null, // 获取当前定位结果来源
-                      gpsAccuracyStatus: null, // GPS的当前状态
-                      trustedLevel: null, // 定位结果的可信度
-                      accuracy: null, // 精度信息，单位:米
+                      locationType: location.getLocationType(), // 获取当前定位结果来源
+                      locationMode: location.getLocationMode(), // 获取当前定位结果来源
+                      gpsAccuracyStatus: location.getGpsAccuracyStatus(), // GPS的当前状态
+                      trustedLevel: location.getTrustedLevel(), // 定位结果的可信度
+                      accuracy: location.getAccuracy(), // 精度信息，单位:米
                       speed: location.getSpeed(), // 速度
                       direct: location.getDirect(), // 方向
-                      status: null, // 定位状态
+                      status: location.getStatus(), // 定位状态
                       time: location.getTime(), // 定位时间
-                      address: null // 地址
+                      address: location.getAddress() // 地址
                     };
 
                     let marker = baseMap.add(
@@ -138,10 +137,7 @@ export default {
                       userList[j].getMarker(),
                       location.getLng(),
                       location.getLat(),
-                      location.getTime(),
-                      location.getSpeed(),
-                      location.getDirect(),
-                      "未知"
+                      location
                     );
                   }
                 }
@@ -171,6 +167,106 @@ export default {
       // 实时更新位置（页面销毁后，停止更新）
       if (!this.isDestroyed) {
         setTimeout(this.queryAll, 5 * 1000);
+      }
+    },
+    _saveLocationInfo(location, curLocation) {
+      location.setTime(curLocation.time !== "" ? curLocation.time.substring(0, 19) : "未知");
+      location.setSpeed(curLocation.speed !== "" ? curLocation.speed : "未知");
+      location.setDirect(curLocation.direct !== "" ? curLocation.direct : "未知");
+      location.setAddress(curLocation.poi_name !== "" ? curLocation.poi_name : "未知");
+      location.setAccuracy(curLocation.accuracy !== "" ? curLocation.accuracy : "未知");
+
+      // 定位结果
+      if (curLocation.code !== "") {
+        if (parseInt(curLocation.code) === 0) {
+          location.setStatus("成功");
+        } else {
+          location.setStatus("失败：" + curLocation.msg);
+        }
+      }
+
+      // GPS信号
+      if (curLocation.gps_accuracy_status !== "") {
+        switch (parseInt(curLocation.gps_accuracy_status)) {
+          case 0:
+            location.setGpsAccuracyStatus("卫星信号弱");
+            break;
+          case 1:
+            location.setGpsAccuracyStatus("卫星信号强");
+            break;
+          case 2:
+            location.setGpsAccuracyStatus("卫星状态未知");
+            break;
+          default:
+            location.setGpsAccuracyStatus("卫星状态未知");
+            break;
+        }
+      }
+
+      // 定位模式
+      if (curLocation.loc_mode !== "") {
+        switch (parseInt(curLocation.loc_mode)) {
+          case 0:
+            location.setLocationMode("低功耗定位");
+            break;
+          case 1:
+            location.setLocationMode("仅用设备定位");
+            break;
+          case 2:
+            location.setLocationMode("高精度定位");
+            break;
+          default:
+            location.setLocationMode("未知");
+            break;
+        }
+      }
+
+      // 定位结果来源
+      if (curLocation.loc_type !== "") {
+        switch (parseInt(curLocation.loc_type)) {
+          case 1:
+            location.setLocationType("GPS定位");
+            break;
+          case 2:
+            location.setLocationType("前次定位");
+            break;
+          case 4:
+            location.setLocationType("缓存定位");
+            break;
+          case 5:
+            location.setLocationType("Wifi定位");
+            break;
+          case 6:
+            location.setLocationType("基站定位");
+            break;
+          case 8:
+            location.setLocationType("离线定位");
+            break;
+          default:
+            location.setLocationType("未知");
+            break;
+        }
+      }
+
+      // 定位结果可信度
+      if (curLocation.trusted_level !== "") {
+        switch (parseInt(curLocation.trusted_level)) {
+          case 1:
+            location.setTrustedLevel("非常可信");
+            break;
+          case 2:
+            location.setTrustedLevel("可信度一般");
+            break;
+          case 3:
+            location.setTrustedLevel("可信度较低");
+            break;
+          case 4:
+            location.setTrustedLevel("非常不可信");
+            break;
+          default:
+            location.setTrustedLevel("未知");
+            break;
+        }
       }
     },
     /**
