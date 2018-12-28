@@ -302,9 +302,9 @@ export default {
       info.push("<p class='input-item'>" + "定位来源 : " + (data.locationType !== null ? data.locationType : "未知") + "</p>");
 
       if (data.gpsAccuracyStatus === "卫星信号强") {
-        info.push("<p class='input-item' style='color:green;'>" + "GPS状态 ：" + (data.gpsAccuracyStatus !== null ? data.gpsAccuracyStatus : "未知") + "</p>");
+        info.push("<p class='input-item' style='color:green;'>" + "GPS状态 : " + (data.gpsAccuracyStatus !== null ? data.gpsAccuracyStatus : "未知") + "</p>");
       } else {
-        info.push("<p class='input-item' style='color:#EA7500;'>" + "GPS状态 ：" + (data.gpsAccuracyStatus !== null ? data.gpsAccuracyStatus : "未知") + "</p>");
+        info.push("<p class='input-item' style='color:#EA7500;'>" + "GPS状态 : " + (data.gpsAccuracyStatus !== null ? data.gpsAccuracyStatus : "未知") + "</p>");
       }
       if (data.trustedLevel === "非常可信") {
         info.push("<p class='input-item' style='color:green;'>" + "定位结果可信度 : " + (data.trustedLevel !== null ? data.trustedLevel : "未知") + "</p>");
