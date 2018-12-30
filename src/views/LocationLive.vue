@@ -103,22 +103,22 @@ export default {
                   location.setLng(gcj02[0]);
                   location.setLat(gcj02[1]);
 
+                  let userInfo = {
+                    uid: userList[j].getUserName(), // 唯一标志
+                    locationType: location.getLocationType(), // 获取当前定位结果来源
+                    locationMode: location.getLocationMode(), // 获取当前定位结果来源
+                    gpsAccuracyStatus: location.getGpsAccuracyStatus(), // GPS的当前状态
+                    trustedLevel: location.getTrustedLevel(), // 定位结果的可信度
+                    accuracy: location.getAccuracy(), // 精度信息，单位:米
+                    speed: location.getSpeed(), // 速度
+                    direct: location.getDirect(), // 方向
+                    status: location.getStatus(), // 定位状态
+                    time: location.getTime(), // 定位时间
+                    address: location.getAddress() // 地址
+                  };
+
                   // 该用户没有加载到地图上，加载进去
                   if (userList[j].getIsAddInMap() === false) {
-                    let userInfo = {
-                      uid: userList[j].getUserName(), // 唯一标志
-                      locationType: location.getLocationType(), // 获取当前定位结果来源
-                      locationMode: location.getLocationMode(), // 获取当前定位结果来源
-                      gpsAccuracyStatus: location.getGpsAccuracyStatus(), // GPS的当前状态
-                      trustedLevel: location.getTrustedLevel(), // 定位结果的可信度
-                      accuracy: location.getAccuracy(), // 精度信息，单位:米
-                      speed: location.getSpeed(), // 速度
-                      direct: location.getDirect(), // 方向
-                      status: location.getStatus(), // 定位状态
-                      time: location.getTime(), // 定位时间
-                      address: location.getAddress() // 地址
-                    };
-
                     let marker = baseMap.add(
                       location.getLng(),
                       location.getLat(),
@@ -137,7 +137,7 @@ export default {
                       userList[j].getMarker(),
                       location.getLng(),
                       location.getLat(),
-                      location
+                      userInfo
                     );
                   }
                 }

@@ -321,8 +321,8 @@ export default {
       info.push("<p class='input-item'>" + "地址 : " + (data.address !== null ? data.address : "未知") + "</p>");
       info.push("<p class='input-item'>" + "经纬度 : " + (lng + "," + lat) + "</p>");
 
-      info.push("<div class='row'><button id='btnVoice' type='button' class='btn btn-default'>语音通话</button>");
-      info.push("<button id='btnVideo' type='button' class='btn btn-default'>视频查看</button>");
+      // info.push("<div class='row'><button id='btnVoice' type='button' class='btn btn-default'>语音通话</button>");
+      info.push("<div class='row'><button id='btnVideo' type='button' class='btn btn-default'>视频查看</button>");
       info.push("<button id='btnTrace' type='button' class='btn btn-default'>历史轨迹</button></div>");
       info.push("</div></div>");
 
