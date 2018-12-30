@@ -4,14 +4,14 @@
     <div id="map-container" class="full"></div>
     <div class="main" v-show="this.$store.state.history.showMarkerAnimation">
       <div class="center">
-        <el-tooltip
+        <!-- <el-tooltip
           class="item"
           effect="dark"
           content="适用于车辆，当其沿着道路行驶时，根据位置和朝向、速度、时间等修正轨迹"
           placement="top"
         >
           <el-checkbox id="chbEnabledAutoCorrected" v-model="enabledAutoCorrected">纠偏</el-checkbox>
-        </el-tooltip>
+        </el-tooltip> -->
         <!-- <div id="speedslider" class="block">
           <span class="demonstration">速度</span>
           <el-slider v-model="speed" :min="5" :max="99"></el-slider>
