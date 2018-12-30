@@ -273,6 +273,9 @@ export default {
     // 信息框中，视频查看按钮被点击
     _onClickInfoWindowBtnVideo() {
       console.log("btnVideo is clicked!");
+      let userName = this.infoWindowMarker.getExtData().uid;
+      // 传递给window
+      window.app.CefWebFunction("onVideoBtnClicked", userName);
     },
     // 信息框中，轨迹按钮被点击
     _onClickInfoWindowBtnTrace() {
