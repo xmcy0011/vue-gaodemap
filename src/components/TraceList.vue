@@ -1,40 +1,48 @@
 <!-- 历史轨迹缩略列表 -->
 <template>
-    <div class="container">
-        <el-collapse accordion @change="SearchOneDayTraceList" style="max-height:600px;">
-            <el-collapse-item v-for="time in $store.state.history.trailDateList" :name="time.date" :key="time.date" :title="time.title">
-                <div class="item" v-for="item in time.trailTimeList" :key="item.start_time" @click="SearchDetailLocation(item.start_time,item.end_time)">
-                    <div class="row">
-                        <div class="row">
-                            <div class="col-md-1">
-                                <div class="circle start-color"></div>
-                            </div>
-                            <div class="col-md-9">
-                                <p class="text-left">{{item.startLoc}}</p>
-                            </div>
-                        </div>
-                        <div class="row">
-                            <div class="col-md-1">
-                                <div class="circle end-color"></div>
-                            </div>
-                            <div class="col-md-9">
-                                <p class="text-left">{{item.endLoc}}</p>
-                            </div>
-                        </div>
-                        <div class="row">
-                            <div class="col-md-1"></div>
-                            <div class="col-md-3">
-                                <p class="text-left">{{item.startTime}}</p>
-                            </div>
-                            <div class="col-md-5">
-                                <p class="text-left">{{item.timeLen}}</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </el-collapse-item>
-        </el-collapse>
-    </div>
+  <div class="container">
+    <el-collapse accordion @change="SearchOneDayTraceList" style="max-height:600px;">
+      <el-collapse-item
+        v-for="time in $store.state.history.trailDateList"
+        :name="time.date"
+        :key="time.date"
+        :title="time.title"
+      >
+        <div
+          class="item"
+          v-for="item in time.trailTimeList"
+          :key="item.start_time"
+          @click="SearchDetailLocation(item.start_time,item.end_time)"
+        >
+          <div class="row">
+            <div class="row">
+              <div class="col-md-1">
+                <div class="circle start-color"></div>
+              </div>
+              <div class="col-md-9">
+                <p class="text-left">{{item.startLoc}}</p>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-md-1">
+                <div class="circle end-color"></div>
+              </div>
+              <div class="col-md-9">
+                <p class="text-left">{{item.endLoc}}</p>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-md-1"></div>
+              <div class="col-md-3">
+                <span class="text-left">{{item.startTime}}</span>
+                <span class="text-left" style="margin-left:10px;">{{item.timeLen}}</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </el-collapse-item>
+    </el-collapse>
+  </div>
 </template>
 
 <script>
@@ -47,7 +55,7 @@ export default {
 
   computed: {},
 
-  mounted() {},
+  mounted() { },
 
   methods: {
     SearchOneDayTraceList(date) {
@@ -106,8 +114,8 @@ export default {
             }
 
             colItem.trailTimeList.push({
-              startLoc: "起：" + trailInfo.start_lon + "," + trailInfo.start_lat,
-              endLoc: "终：" + trailInfo.end_lon + "," + trailInfo.end_lat,
+              startLoc: "起：" + trailInfo.start_poi_name,
+              endLoc: "终：" + trailInfo.end_poi_name,
               startTime: trailInfo.start_time.substring(10, 19),
               timeLen: timeLen,
               start_time: trailInfo.start_time,
@@ -174,10 +182,10 @@ export default {
   margin-left: 15px;
 }
 .circle {
-  width: 12px;
-  height: 12px;
+  width: 8px;
+  height: 8px;
   border-radius: 10px;
-  margin: 3px;
+  margin: 5px;
   float: left;
 }
 .start-color {
