@@ -4,7 +4,7 @@
     <!--普通搜索，选择用户和时间段-->
     <el-tab-pane label="普通搜索" name="first">
       <div class="flex">
-        <el-select class="flex-item" v-model="$store.state.history.selectedUser" clearable placeholder="姓名" visible-change="UserSelectVisibleChanged">
+        <el-select class="flex-item" v-model="$store.state.history.selectedUser" clearable placeholder="姓名" filterable visible-change="UserSelectVisibleChanged">
           <el-option v-for="item in userList" :key="item.userName" :label="item.nickName" :value="item.userName">
           </el-option>
         </el-select>
@@ -17,7 +17,7 @@
     </el-tab-pane>
     <el-tab-pane label="简单搜索" name="second">
       <div class="flex">
-        <el-select class="flex-item" v-model="$store.state.history.selectedUser" clearable placeholder="姓名" visible-change="UserSelectVisibleChanged">
+        <el-select class="flex-item" v-model="$store.state.history.selectedUser" clearable placeholder="姓名" filterable visible-change="UserSelectVisibleChanged">
           <el-option v-for="item in userList" :key="item.userName" :label="item.nickName" :value="item.userName">
           </el-option>
         </el-select>
